@@ -1,0 +1,8 @@
+{
+    "routes": [
+      {
+        "src": "/unsafe-url",
+        "dest": "@COMFYUI_HOST"
+      }
+    ]
+  }
