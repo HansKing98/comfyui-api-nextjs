@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 export default function Home() {
   return (
-    <main className="flex flex-col items-center justify-between p-24">
+    <main className="flex flex-col items-center justify-between p-24 w-screen">
       <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
         <Link
           href="/"
@@ -44,7 +44,7 @@ export default function Home() {
           <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>查看历史队列</p>
         </Link>
       </div>
-      <div className="text-gray-700">
+      <div className="text-gray-700 mt-10">
         集成 ComfyUI API 的 next 前端案例，适配本地和服务器版本
       </div>
       <div className="text-gray-700">
