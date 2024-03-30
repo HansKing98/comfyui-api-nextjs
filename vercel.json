@@ -1,8 +1,5 @@
 {
-    "routes": [
-      {
-        "src": "/unsafe-url/.",
-        "dest": "@COMFYUI_HOST"
-      }
-    ]
-  }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "https://www.hansking.cn/$1" }
+  ]
+}
