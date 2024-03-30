@@ -1,5 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/(.*)", "destination": "https://www.hansking.cn/$1" }
-  ]
-}

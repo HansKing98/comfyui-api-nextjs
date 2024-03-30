@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 async function getData({ prompt_id }: { prompt_id: string }) {
@@ -36,7 +35,7 @@ export default function Page() {
         setData(res);
       });
     }
-  }, [prompt_id]);
+  }, []);
 
   useEffect(() => {
     setIsMounted(true);
@@ -45,31 +44,26 @@ export default function Page() {
 
   return (
     <main className="">
-      <Link href={`/output`}>全部</Link>
-
       {data.map((item: any, index: number) => (
         <div className="m-4" key={item.prompt_id}>
           <span className="mx-6">
-            prompt_id：{item.prompt_id}{" "}
-            <Link href={`/output?prompt_id=${item.prompt_id}`}>打开</Link>
+            prompt_id：{item.prompt_id}
           </span>
           {/* {JSON.stringify(item.output_images)} */}
           <div className="mx-6 flex " style={{ height: "auto" }} key="el">
             {item.output_images.map((el: any) => (
               <div className="flex flex-col mx-6 mb-6" key={el}>
-                <div className="flex">
-                  <a className="text-blue-300" target="_blank" href={el}>
-                    {el.replace(
-                      `${process.env.NEXT_PUBLIC_COMFYUI_IMAGE_HOST}/view?filename=`,
-                      ""
-                    )}
-                  </a>
-                  <a href={el} target="_blank" rel="noopener noreferrer">
-                    下载
-                  </a>
-                </div>
-
-                <Image
+                <a
+                  className="text-blue-300"
+                  target="_blank"
+                  href={el}
+                >
+                  {el.replace(
+                    `${process.env.NEXT_PUBLIC_COMFYUI_IMAGE_HOST}/view?filename=`,
+                    ""
+                  )}
+                </a>
+                {/* <Image
                   width={0}
                   height={0}
                   sizes="25vw"
@@ -77,7 +71,7 @@ export default function Page() {
                   src={el}
                   key="index"
                   alt=""
-                />
+                /> */}
               </div>
             ))}
           </div>
