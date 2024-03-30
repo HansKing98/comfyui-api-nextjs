@@ -30,14 +30,18 @@ export default function Page() {
     <main className="flex flex-wrap">
       {imageList.map((image: string, index: number) => (
         <div className="" style={{ height: "200px" }} key={index}>
-          <Image
+          <img
             width={0}
             height={0}
             sizes="25vw"
             style={{ width: "100%", height: "auto" }}
             // width={200}
             // height={300}
-            src={`/unsafe-url/view?filename=${image}`}
+            src={`${
+              process.env.NEXT_PUBLIC_DEV
+                ? process.env.NEXT_PUBLIC_COMFYUI_HOST
+                : "/unsafe-url"
+            }/view?filename=${image}`}
             key="index"
             alt=""
           />
