@@ -19,9 +19,10 @@ async function getData({ prompt_id }: { prompt_id: string }) {
 }
 
 export default function Page() {
+  const query = useSearchParams();
+
   const [isMounted, setIsMounted] = useState(false);
   const [data, setData] = useState<any>([]);
-  const query = useSearchParams();
   const prompt_id = query.get("prompt_id");
 
   useEffect(() => {
@@ -36,7 +37,7 @@ export default function Page() {
         setData(res);
       });
     }
-  }, [prompt_id]);
+  }, []);
 
   useEffect(() => {
     setIsMounted(true);

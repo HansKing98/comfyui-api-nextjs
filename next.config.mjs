@@ -1,16 +1,19 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-    reactStrictMode: true,
-    images: {
-        remotePatterns: [
-          {
-            protocol: 'https',
-            hostname: 'comfyui-image.vercel.app',
-            port: '',
-          },
-        ],
+  reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'comfyui-image.vercel.app',
+        port: '',
       },
+    ],
+  },
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
 };
 
 // nextConfig.rewrites = async () => {

@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 async function getData({ prompt_id }: { prompt_id: string }) {
@@ -18,9 +17,10 @@ async function getData({ prompt_id }: { prompt_id: string }) {
 }
 
 export default function Page() {
+  const query = useSearchParams();
+
   const [isMounted, setIsMounted] = useState(false);
   const [data, setData] = useState<any>([]);
-  const query = useSearchParams();
   const prompt_id = query.get("prompt_id");
 
   useEffect(() => {
