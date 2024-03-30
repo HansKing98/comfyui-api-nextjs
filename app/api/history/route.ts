@@ -1,14 +1,9 @@
 
 // export const runtime = 'edge';
-import type { NextApiRequest, NextApiResponse } from 'next'
 import { NextResponse } from 'next/server'
 
-type ResponseData = {
-  message: string
-}
 export async function GET(
-  request: NextApiRequest,
-  response: NextApiResponse<ResponseData>
+  request: Request,
 ) {
   const { searchParams } = new URL(request.url || '')
   const prompt_id = searchParams.get('prompt_id')
