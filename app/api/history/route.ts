@@ -1,6 +1,9 @@
 // export const runtime = 'edge';
 import { NextResponse } from 'next/server'
 
+const input_regex = /"inputs":{"image":".*?\.(png|jpg|jpeg|gif|bmp|svg|webp)/g
+const output_regex = /"filename".*?\.(png|jpg|jpeg|gif|bmp|svg|webp)/g
+
 export async function GET(
   request: Request,
 ) {
@@ -27,52 +30,78 @@ export async function GET(
 
   const history = await res.json()
 
-  interface ImageList {
-    prompt_id: string;
+  interface ImageObj {
     input_images: string[];
     output_images: string[];
   }
+  interface DetailObj extends ImageObj {
+    prompt_id: string;
+    queue_code: number;
+  }
 
-  const getOutPutImages = (item: any): string[] => {
+
+  const getDetail = (item: any): ImageObj => {
     const str = JSON.stringify(item)
-    const regex = /"filename".*?\.png/g
-    const match = str.match(regex);
-    const list: any = []
-    match?.forEach((el: any) => {
+
+    // get input image
+    const input_match = str.match(input_regex);
+    const input_1: any = []
+    input_match?.forEach((el: any) => {
       if (el.includes('_temp_')) {
         return
       }
-
-      list.push(`${process.env.NEXT_PUBLIC_COMFYUI_IMAGE_HOST}/view?filename=${el.replace('"filename":"', '')}`)
+      input_1.push(`${process.env.NEXT_PUBLIC_COMFYUI_IMAGE_HOST}/view?filename=${el.replace('"inputs":{"image":"', '')}&type=input`)
     })
+    // 
+    // get output image
+    const output_match = str.match(output_regex);
+    const output_1: any = []
+    output_match?.forEach((el: any) => {
+      if (el.includes('_temp_')) {
+        return
+      }
+      output_1.push(`${process.env.NEXT_PUBLIC_COMFYUI_IMAGE_HOST}/view?filename=${el.replace('"filename":"', '')}`)
+    })
+    //
 
-    return list.filter((item: any, index: any) => list.indexOf(item) === index)
+    let input_2: string[] = input_1.filter((item: any, index: any) => input_1.indexOf(item) === index)
+    let output_2: string[] = output_1.filter((item: any, index: any) => output_1.indexOf(item) === index)
+
+    return {
+      input_images: input_2,
+      output_images: output_2
+    }
   }
 
-  const imageList: ImageList[] = []
+  const imageList: DetailObj[] = []
 
   if (prompt_id) {
-    const thisRow = Object.values(history).filter((item: any) => item.status.messages[0][1].prompt_id === prompt_id)
-    let a: string[] = getOutPutImages(thisRow[0])
+    const thisRow: any[] = Object.values(history).filter((item: any) => item.status.messages[0][1].prompt_id === prompt_id)
+    const queue_code = thisRow[0].prompt[0]
+    // console.log('thisRow', thisRow);
+    // console.log('thisRow', JSON.stringify(thisRow));
+
+    let detail: ImageObj = getDetail(thisRow[0])
     imageList.push(
       {
         prompt_id,
-        input_images: [],
-        output_images: a
+        queue_code,
+        ...detail
       }
     )
-    // str = JSON.stringify(history)
+
   } else {
     Object.keys(history).forEach((key: any) => {
-      const thisRow = history[key]
+      const thisRow: any = history[key]
       const prompt_id = thisRow.status.messages[0][1].prompt_id
-      const a = getOutPutImages(thisRow)
+      const queue_code = thisRow.prompt[0]
+      let detail: ImageObj = getDetail(thisRow)
 
       imageList.push(
         {
           prompt_id,
-          input_images: [],
-          output_images: a
+          queue_code,
+          ...detail
         }
       )
     })

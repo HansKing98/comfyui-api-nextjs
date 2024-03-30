@@ -9,6 +9,11 @@ const nextConfig = {
         hostname: 'comfyui-image.vercel.app',
         port: '',
       },
+      {
+        protocol: 'https',
+        hostname: 'comfyui.hansking.cn',
+        port: '',
+      },
     ],
   },
   experimental: {

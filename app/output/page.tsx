@@ -29,6 +29,7 @@ export default function Page() {
     if (prompt_id) {
       getData({ prompt_id }).then((res) => {
         // debugger
+        console.log("res", res);
         setData(res);
       });
     } else {
@@ -37,7 +38,7 @@ export default function Page() {
         setData(res);
       });
     }
-  }, []);
+  }, [prompt_id]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -51,11 +52,46 @@ export default function Page() {
       {data.map((item: any, index: number) => (
         <div className="m-4" key={item.prompt_id}>
           <span className="mx-6">
-            prompt_id：{item.prompt_id}{" "}
-            <Link href={`/output?prompt_id=${item.prompt_id}`}>打开</Link>
+            【prompt_id】：{item.prompt_id} 【queue_code】：{item.queue_code}{" "} <Link href={`/output?prompt_id=${item.prompt_id}`}>打开</Link>
           </span>
           {/* {JSON.stringify(item.output_images)} */}
           <div className="mx-6 flex " style={{ height: "auto" }} key="el">
+            {item.input_images.map((el: any) => (
+              <div className="flex flex-col mx-6 mb-6" key={el}>
+                <div className="flex">
+                  <a
+                    className="text-blue-300 text-nowrap"
+                    target="_blank"
+                    href={el}
+                  >
+                    {el
+                      .replace(
+                        `${process.env.NEXT_PUBLIC_COMFYUI_IMAGE_HOST}/view?filename=`,
+                        ""
+                      )
+                      .replaceAll(`&type=input`, "")}
+                  </a>
+                  <a
+                    className=" text-nowrap"
+                    href={el}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    下载
+                  </a>
+                </div>
+
+                <Image
+                  width={0}
+                  height={0}
+                  sizes="25vw"
+                  style={{ width: "100%", height: "auto" }}
+                  src={el}
+                  key="index"
+                  alt=""
+                />
+              </div>
+            ))}
             {item.output_images.map((el: any) => (
               <div className="flex flex-col mx-6 mb-6" key={el}>
                 <div className="flex">
