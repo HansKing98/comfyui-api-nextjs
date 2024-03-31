@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 
 const host = process.env.COMFYUI_HOST
+const public_host = process.env.NEXT_PUBLIC_COMFYUI_IMAGE_HOST
 
 export async function POST(
   req: Request
@@ -27,6 +28,6 @@ export async function POST(
     //   type: "input"
     // },
     ...upload,
-    url:`${host}/view?filename=${upload.name}&type=input`
+    url:`${public_host}/view?filename=${upload.name}&type=input`
   }])
 }

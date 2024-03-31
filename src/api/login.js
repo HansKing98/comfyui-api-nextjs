@@ -11,7 +11,7 @@ export function getToken(){
             token = oldToken
             return token
         } else {
-            console.warn('no old token')
+            console.log('no old token')
             return token
         }
     }

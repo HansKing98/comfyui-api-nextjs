@@ -4,14 +4,14 @@ import { NextResponse } from 'next/server'
 const input_regex = /"inputs":{"image":".*?\.(png|jpg|jpeg|gif|bmp|svg|webp)/g
 const output_regex = /"filename".*?\.(png|jpg|jpeg|gif|bmp|svg|webp)/g
 
+const host = process.env.COMFYUI_HOST
+
 export async function GET(
   request: Request,
 ) {
   const { searchParams } = new URL(request.url || '')
   const prompt_id = searchParams.get('prompt_id')
   console.log('prompt_id', prompt_id);
-
-  const host = process.env.COMFYUI_HOST
 
   let url = `${host}/history`
   if (prompt_id) {

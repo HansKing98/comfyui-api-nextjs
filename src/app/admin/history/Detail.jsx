@@ -9,9 +9,9 @@ import {
   ProFormUploadButton,
   ProFormUploadDragger
 } from '@ant-design/pro-components'
-import { Col, Row, Space, message, Button, Image, Progress } from 'antd'
-import { useRef, useState } from 'react'
-import { commonPost } from '@/api/util'
+import { Col, Row, Space, message, Button, Image, Progress,Modal } from 'antd'
+import { useEffect, useRef, useState } from 'react'
+import { commonGet, commonPost } from '@/api/util'
 
 
 const LAYOUT_TYPE_HORIZONTAL = 'horizontal'
@@ -25,6 +25,13 @@ const waitTime = (time = 100) => {
   })
 
 }
+const getBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
 const Page = ({ data, status, someEvent }) => {
   const formRef = useRef()
 
@@ -32,18 +39,38 @@ const Page = ({ data, status, someEvent }) => {
   const [formLayoutType, setFormLayoutType] = useState(
     LAYOUT_TYPE_HORIZONTAL,
   )
+  const [queue, setQueue] = useState({
+    "queue_running": [],
+    "queue_pending": []
+  })
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
+  const [previewTitle, setPreviewTitle] = useState('');
+
   const formItemLayout = {
     labelCol: { span: 4 },
     wrapperCol: { span: 14 },
   }
 
-  const handleSave = () => {
+  useEffect(() => {
+    getQueue()
+  }, [])
+  const getQueue = () => {
+    commonGet('/api/queue').then(res => {
+      // console.log('res', res)
+      setQueue(res)
+    })
+  }
 
-    console.log('formData', formRef?.current.getFieldsFormatValue())
+  const handleSave = () => {
+    console.log('formData', formRef?.current.validateFieldsReturnFormatValue())
     const formData = formRef?.current.getFieldsFormatValue()
     const input_image = formData.input_image[0].name
 
-    commonPost('/api/prompt', { input_image, input: input_image })
+    commonPost('/api/prompt', { input_image, input: input_image }).then(res => {
+      getQueue()
+    })
+
   }
   const handleCancel = (event, params) => {
     someEvent && someEvent['cancel']()
@@ -67,10 +94,14 @@ const Page = ({ data, status, someEvent }) => {
                     <Button htmlType="button" onClick={() => handleCancel()} key="cancel">
                       取消
                     </Button>,
-                    ...doms,
-                    <Button htmlType="button" onClick={handleSave} key="save">
-                      保存
-                    </Button>]}</Space>
+                    // ...doms,
+                    <Button htmlType="button" type="primary" onClick={handleSave} key="queue">
+                      加入队列
+                    </Button>,
+                    <Button htmlType="button" onClick={getQueue} key="refreshQueue">
+                      刷新队列
+                    </Button>
+                  ]}</Space>
               </Col>
             </Row>
           },
@@ -101,20 +132,19 @@ const Page = ({ data, status, someEvent }) => {
           }
         }}
       >
-        <ProFormText
+        {/* <ProFormText
           width="md"
           name="displayName"
           label="Name"
           // tooltip="最长为 24 位"
           placeholder={"给bot起个名字"}
-          rules={[{ required: true }]}
-        />
+        /> */}
         <ProFormTextArea width="xl" label="Scene Prompt" name="prompt" placeholder={"please input prompt"} />
         <ProFormText
           name="segment anything"
           label="Mask Prompt"
           // tooltip="最长为 24 位"
-          placeholder="例如：people, People hold weapons.（重绘保留人物）"
+          placeholder="默认值：people（重绘保留人物）"
         />
         <ProFormSwitch
           colProps={{
@@ -134,6 +164,7 @@ const Page = ({ data, status, someEvent }) => {
           label="Input Image"
           name="input_image"
           title="点击上传"
+          rules={[{ required: true }]}
           onChange={(file) => {
             if (file.fileList[0]?.response) {
               let fileList = [{ url: file.fileList[0]?.response.fileAddress }]
@@ -144,10 +175,50 @@ const Page = ({ data, status, someEvent }) => {
           fieldProps={{
             name: 'file',
             listType: 'picture-card',
+            onPreview:async(file)=>{
+              if (!file.url && !file.preview) {
+                file.preview = await getBase64(file.originFileObj);
+              }
+              setPreviewImage(file.url || file.preview);
+              setPreviewOpen(true);
+              setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
+            }
           }}
         />
+        <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={()=>setPreviewOpen(false)}>
+        <img
+          alt="example"
+          style={{
+            width: '100%',
+          }}
+          src={previewImage}
+        />
+      </Modal>
       </ProForm>
       <div className="mt-2">
+        <div className="flex mt-4">
+          <div className='w-32 text-right'>
+            Queue：
+          </div>
+          {queue.queue_running.length||queue.queue_pending.length ?(<div className="w-64 flex flex-col">
+          <span className='text-blue-400'>queue_running</span>
+            {queue.queue_running.map(el => {
+              return <div className="flex" key={el.prompt_id}>
+                <div className="">{el.prompt_id}： </div>
+                <div className="">{el.queue_code}</div>
+              </div>
+            })}
+            <span className='text-orange-400'>
+            queue_pending
+            </span>
+            {queue.queue_pending.length?queue.queue_pending.map(el => {
+              return <div className="flex" key={el.prompt_id}>
+                <div className="">{el.prompt_id}： </div>
+                <div className="">{el.queue_code}</div>
+              </div>
+            }):'None'}
+          </div>):'当前无队列'}
+        </div>
         <div className="flex mt-4">
           <div className='w-32 text-right'>
             Progress：
@@ -167,6 +238,7 @@ const Page = ({ data, status, someEvent }) => {
           />
         </div>
       </div>
+      
     </>
   )
 }
