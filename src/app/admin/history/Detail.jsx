@@ -15,6 +15,11 @@ import { commonGet, commonPost } from '@/api/util'
 
 
 let newTimer = null
+
+let maxQueueSize =0
+let queueSize=0
+let currentQueueIndex=0
+
 const LAYOUT_TYPE_HORIZONTAL = 'horizontal'
 
 const waitTime = (time = 100) => {
@@ -52,12 +57,13 @@ const Page = ({ data, status, someEvent }) => {
   const [promptId, setPromptId] = useState('');
   const [outputImages, setOutputImages] = useState([])
   const [progress, setProgress] = useState(0);
-  const [maxQueueSize,SetMaxQueueSize] = useState(0)
+
 
   const formItemLayout = {
     labelCol: { span: 4 },
     wrapperCol: { span: 14 },
   }
+
 
   useEffect(() => {
     getQueue()
@@ -66,10 +72,40 @@ const Page = ({ data, status, someEvent }) => {
       clearInterval(newTimer)
     };
   }, [])
-  const getQueue = () => {
+  const getQueue = (prompt_id) => {
     commonGet(`/api/queue?b=${Math.random()}`).then(res => {
       // console.log('res', res)
-      // SetMaxQueueSize(res.queue_pending.length + res.queue_running.length)
+      let currentIndex = 0
+      let maxSize = res.queue_pending.length + res.queue_running.length
+      
+      if (queueSize < maxSize) {
+        maxQueueSize = maxSize
+      }else{
+        maxSize = maxQueueSize
+      }
+
+      if (prompt_id) {
+        if (res.queue_running[0].prompt_id === prompt_id) {
+          currentQueueIndex = currentIndex
+        } else {
+          currentIndex += 1
+          res.queue_pending.forEach(el => {
+            if (el.prompt_id === prompt_id) {
+              currentQueueIndex = currentIndex
+            }else{
+              currentIndex += 1
+            }
+          })
+        }
+        let p = Number(( (maxSize - currentIndex) / maxSize *100 ).toFixed(2))
+        setProgress(p)
+        if (p > 95) {
+          setProgress(95.5)
+        } else {
+          setProgress(p)
+        }
+      }
+      // setProgress(progress + 10)
       setQueue(res)
     })
   }
@@ -78,13 +114,13 @@ const Page = ({ data, status, someEvent }) => {
     return commonGet(`/api/history?prompt_id=${prompt_id}`)
   }
   const upProgress = () => {
-    console.log(progress);
-    if (progress < 90) {
-      setProgress(progress + 10)
-    } else if (progress < 95) {
-      setProgress(progress + 0.5)
-    } else {
-    }
+    // console.log(progress);
+    // if (progress < 90) {
+    //   
+    // } else if (progress < 95) {
+    //   setProgress(progress + 0.5)
+    // } else {
+    // }
   }
   const handleSave = () => {
     console.log('formData', formRef?.current.validateFieldsReturnFormatValue())
@@ -94,17 +130,17 @@ const Page = ({ data, status, someEvent }) => {
       setProgress(0)
       setOutputImages([])
       setPromptId(res.prompt_id)
-      getQueue()
-
+      const prompt_id = res.prompt_id
       clearInterval(newTimer)
       newTimer = setInterval(() => {
+        getQueue(res.prompt_id)
         getCurrentComfyUI({ prompt_id: res.prompt_id }).then(res => {
           upProgress()
           if (res?.[0]) {
+            getQueue(res.prompt_id)
             console.log('prompt_id', res)
             setOutputImages(res[0].output_images)
             clearInterval(newTimer)
-            getQueue()
             setProgress(100)
           }
 
