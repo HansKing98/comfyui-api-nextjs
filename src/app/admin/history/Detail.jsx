@@ -66,8 +66,7 @@ const Page = ({ data, status, someEvent }) => {
     console.log('formData', formRef?.current.validateFieldsReturnFormatValue())
     const formData = formRef?.current.getFieldsFormatValue()
     const input_image = formData.input_image[0].name
-
-    commonPost('/api/prompt', { input_image, input: input_image }).then(res => {
+    commonPost('/api/prompt', { ...formData, input_image, }).then(res => {
       getQueue()
     })
 
@@ -141,7 +140,7 @@ const Page = ({ data, status, someEvent }) => {
         /> */}
         <ProFormTextArea width="xl" label="Scene Prompt" name="prompt" placeholder={"please input prompt"} />
         <ProFormText
-          name="segment anything"
+          name="segment_anything"
           label="Mask Prompt"
           // tooltip="最长为 24 位"
           placeholder="默认值：people（重绘保留人物）"
@@ -155,7 +154,18 @@ const Page = ({ data, status, someEvent }) => {
             onChange: (e) => console.log(e),
           }}
           label="InvertMask"
-          name="mask"
+          name="invertMask"
+        />
+        <ProFormSwitch
+          colProps={{
+            span: 4,
+          }}
+          checkedChildren="4k" unCheckedChildren="720p"
+          fieldProps={{
+            onChange: (e) => console.log(e),
+          }}
+          label="4x-UltraSharp"
+          name="open4k"
         />
         <ProFormUploadButton
           width="md"
@@ -219,7 +229,7 @@ const Page = ({ data, status, someEvent }) => {
             }):'None'}
           </div>):'当前无队列'}
         </div>
-        <div className="flex mt-4">
+        {/* <div className="flex mt-4">
           <div className='w-32 text-right'>
             Progress：
           </div>
@@ -236,7 +246,7 @@ const Page = ({ data, status, someEvent }) => {
             width={200}
             src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
           />
-        </div>
+        </div> */}
       </div>
       
     </>
