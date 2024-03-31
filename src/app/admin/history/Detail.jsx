@@ -90,9 +90,9 @@ const Page = ({ data, status, someEvent }) => {
                 </Button>]
                   :
                   [
-                    <Button htmlType="button" onClick={() => handleCancel()} key="cancel">
-                      取消
-                    </Button>,
+                    // <Button htmlType="button" onClick={() => handleCancel()} key="cancel">
+                    //   取消
+                    // </Button>,
                     // ...doms,
                     <Button htmlType="button" type="primary" onClick={handleSave} key="queue">
                       加入队列
