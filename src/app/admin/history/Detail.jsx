@@ -126,7 +126,7 @@ const Page = ({ data, status, someEvent }) => {
           max={1}
           extra="建议尺寸640*360，小于10M的JPG、 PNG格式图片"
           label="Input Image"
-          name="senario"
+          name="input_image"
           title="点击上传"
           onChange={(file) => {
             if (file.fileList[0]?.response) {
@@ -134,7 +134,7 @@ const Page = ({ data, status, someEvent }) => {
               formRef?.current && formRef.current.setFieldValue('senario', fileList)
             }
           }}
-          action='https://comfyui-api-nextjs.vercel.app/v1/opt/upload-file'
+          action='/api/upload'
           fieldProps={{
             name: 'file',
             listType: 'picture-card',
