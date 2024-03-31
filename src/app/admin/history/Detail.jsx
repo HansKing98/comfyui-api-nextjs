@@ -95,6 +95,8 @@ const Page = ({ data, status, someEvent }) => {
       setOutputImages([])
       setPromptId(res.prompt_id)
       getQueue()
+
+      clearInterval(newTimer)
       newTimer = setInterval(() => {
         getCurrentComfyUI({ prompt_id: res.prompt_id }).then(res => {
           upProgress()
