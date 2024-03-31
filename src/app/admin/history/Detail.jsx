@@ -11,6 +11,7 @@ import {
 } from '@ant-design/pro-components'
 import { Col, Row, Space, message, Button, Image, Progress } from 'antd'
 import { useRef, useState } from 'react'
+import { commonPost } from '@/api/util'
 
 
 const LAYOUT_TYPE_HORIZONTAL = 'horizontal'
@@ -37,7 +38,12 @@ const Page = ({ data, status, someEvent }) => {
   }
 
   const handleSave = () => {
+
     console.log('formData', formRef?.current.getFieldsFormatValue())
+    const formData = formRef?.current.getFieldsFormatValue()
+    const input_image = formData.input_image[0].name
+
+    commonPost('/api/prompt', { input_image, input: input_image })
   }
   const handleCancel = (event, params) => {
     someEvent && someEvent['cancel']()

@@ -9,7 +9,7 @@ export async function POST(
   const file = formData.get('file') as File
   // apiFox 导出
   var myHeaders = new Headers();
-  myHeaders.append("Comfy-User", "undefined");
+  // myHeaders.append("Comfy-User", "undefined");
   myHeaders.append("Proxy-Connection", "keep-alive");
   var formdata = new FormData();
   formdata.append("image", file);

@@ -7,7 +7,8 @@ if(typeof window !== 'undefined'){
 
 // XHost = 'comfyui-api-nextjs.vercel.app'
 
-export const baseUrl ='https://comfyui-api-nextjs.vercel.app/output'
+// 请求next服务器端 所以是 空字符串
+export const baseUrl =''
 
 
 function commonFetch(method, url, data, checkLogin = true) {
