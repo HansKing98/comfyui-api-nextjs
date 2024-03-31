@@ -860,7 +860,7 @@ exports.prompt_template_ai_1080 = ({
         },
         "925": {
             "inputs": {
-                "text": prompt_text || "Large floor-to-ceiling windows，Dreampolis, hyper-detailed digital illustration, cyberpunk, single girl with techsuite hoodie and headphones in the street, neon lights, lighting bar, city, cyberpunk city, film still, backpack, in megapolis, pro-lighting, high-res, masterpiece, (/qingning/), (\\MBTI\\), (\\shen ming shao nv\\)\n"
+                "text": (prompt_text || "Large floor-to-ceiling windows，Dreampolis, hyper-detailed digital illustration, cyberpunk, single girl with techsuite hoodie and headphones in the street, neon lights, lighting bar, city, cyberpunk city, film still, backpack, in megapolis, pro-lighting, high-res, masterpiece, (/qingning/), (\\MBTI\\), (\\shen ming shao nv\\)\n") + Math.random()
             },
             "class_type": "Text Multiline",
             "_meta": {
@@ -3810,7 +3810,7 @@ exports.prompt_template_ai_1080 = ({
                             "Node name for S&R": "Text Multiline"
                         },
                         "widgets_values": [
-                            prompt_text || "Large floor-to-ceiling windows，Dreampolis, hyper-detailed digital illustration, cyberpunk, single girl with techsuite hoodie and headphones in the street, neon lights, lighting bar, city, cyberpunk city, film still, backpack, in megapolis, pro-lighting, high-res, masterpiece, (/qingning/), (\\MBTI\\), (\\shen ming shao nv\\)\n"
+                            (prompt_text || "Large floor-to-ceiling windows，Dreampolis, hyper-detailed digital illustration, cyberpunk, single girl with techsuite hoodie and headphones in the street, neon lights, lighting bar, city, cyberpunk city, film still, backpack, in megapolis, pro-lighting, high-res, masterpiece, (/qingning/), (\\MBTI\\), (\\shen ming shao nv\\)\n") + Math.random()
                         ],
                         "color": "#232",
                         "bgcolor": "#353"

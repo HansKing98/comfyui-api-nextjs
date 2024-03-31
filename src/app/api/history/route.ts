@@ -11,17 +11,26 @@ export async function GET(
 ) {
   const { searchParams } = new URL(request.url || '')
   const prompt_id = searchParams.get('prompt_id')
+  const max = searchParams.get('max')
   console.log('prompt_id', prompt_id);
+  console.log('max', max);
 
   let url = `${host}/history`
   if (prompt_id) {
-    url = `${host}/history?prompt_id=${prompt_id}`
+    url = `${host}/history/${prompt_id}`
   } else {
-    url = `${host}/history?max_items=200`
+    if (max) {
+      console.log(max);
+      url = `${host}/history?max_items=${max}`
+    }else{
+      url = `${host}/history?max_items=${10}`
+    }
   }
+  console.log(url);
+  
   // 官方支持 按 id 查询，但是传入 prompt_id 只能拿到全部的。
   // 这是个bug
-  const res = await fetch(`${host}/history`, {
+  const res = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
       'API-Key': process.env.DATA_API_KEY!,

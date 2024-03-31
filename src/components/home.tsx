@@ -34,7 +34,7 @@ export function Home() {
             <CardDescription>查看历史图片</CardDescription>
           </CardHeader>
           <CardContent>
-            <Link href={"/output"}>
+            <Link href={"/admin/output"}>
               <Button className="w-full">Output →</Button>
             </Link>
           </CardContent>

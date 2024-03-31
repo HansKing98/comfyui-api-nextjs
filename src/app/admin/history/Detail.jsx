@@ -9,11 +9,12 @@ import {
   ProFormUploadButton,
   ProFormUploadDragger
 } from '@ant-design/pro-components'
-import { Col, Row, Space, message, Button, Image, Progress,Modal } from 'antd'
+import { Col, Row, Space, message, Button, Image, Progress, Modal } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 import { commonGet, commonPost } from '@/api/util'
 
 
+let newTimer = null
 const LAYOUT_TYPE_HORIZONTAL = 'horizontal'
 
 const waitTime = (time = 100) => {
@@ -32,6 +33,7 @@ const getBase64 = (file) =>
     reader.onload = () => resolve(reader.result);
     reader.onerror = (error) => reject(error);
   });
+
 const Page = ({ data, status, someEvent }) => {
   const formRef = useRef()
 
@@ -47,6 +49,11 @@ const Page = ({ data, status, someEvent }) => {
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
 
+  const [promptId, setPromptId] = useState('');
+  const [outputImages, setOutputImages] = useState([])
+  const [progress, setProgress] = useState(0);
+  const [maxQueueSize,SetMaxQueueSize] = useState(0)
+
   const formItemLayout = {
     labelCol: { span: 4 },
     wrapperCol: { span: 14 },
@@ -54,20 +61,53 @@ const Page = ({ data, status, someEvent }) => {
 
   useEffect(() => {
     getQueue()
+    return () => {
+      console.log("App挂了");
+      clearInterval(newTimer)
+    };
   }, [])
   const getQueue = () => {
     commonGet(`/api/queue?b=${Math.random()}`).then(res => {
       // console.log('res', res)
+      // SetMaxQueueSize(res.queue_pending.length + res.queue_running.length)
       setQueue(res)
     })
   }
 
+  const getCurrentComfyUI = ({ prompt_id }) => {
+    return commonGet(`/api/history?prompt_id=${prompt_id}`)
+  }
+  const upProgress = () => {
+    console.log(progress);
+    if (progress < 90) {
+      setProgress(progress + 10)
+    } else if (progress < 95) {
+      setProgress(progress + 0.5)
+    } else {
+    }
+  }
   const handleSave = () => {
     console.log('formData', formRef?.current.validateFieldsReturnFormatValue())
     const formData = formRef?.current.getFieldsFormatValue()
     const input_image = formData.input_image[0].name
     commonPost('/api/prompt', { ...formData, input_image, }).then(res => {
+      setProgress(0)
+      setOutputImages([])
+      setPromptId(res.prompt_id)
       getQueue()
+      newTimer = setInterval(() => {
+        getCurrentComfyUI({ prompt_id: res.prompt_id }).then(res => {
+          upProgress()
+          if (res?.[0]) {
+            console.log('prompt_id', res)
+            setOutputImages(res[0].output_images)
+            clearInterval(newTimer)
+            getQueue()
+            setProgress(100)
+          }
+
+        })
+      }, 2000)
     })
 
   }
@@ -185,7 +225,7 @@ const Page = ({ data, status, someEvent }) => {
           fieldProps={{
             name: 'file',
             listType: 'picture-card',
-            onPreview:async(file)=>{
+            onPreview: async (file) => {
               if (!file.url && !file.preview) {
                 file.preview = await getBase64(file.originFileObj);
               }
@@ -195,60 +235,65 @@ const Page = ({ data, status, someEvent }) => {
             }
           }}
         />
-        <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={()=>setPreviewOpen(false)}>
-        <img
-          alt="example"
-          style={{
-            width: '100%',
-          }}
-          src={previewImage}
-        />
-      </Modal>
+        <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={() => setPreviewOpen(false)}>
+          <img
+            alt="example"
+            style={{
+              width: '100%',
+            }}
+            src={previewImage}
+          />
+        </Modal>
       </ProForm>
       <div className="mt-2">
         <div className="flex mt-4">
           <div className='w-32 text-right'>
             Queue：
           </div>
-          {queue.queue_running.length||queue.queue_pending.length ?(<div className="w-64 flex flex-col">
-          <span className='text-blue-400'>queue_running</span>
+          {queue.queue_running.length || queue.queue_pending.length ? (<div className="w-64 flex flex-col">
+            <span className='text-blue-400'>queue_running</span>
             {queue.queue_running.map(el => {
               return <div className="flex" key={el.prompt_id}>
-                <div className="">{el.prompt_id}： </div>
-                <div className="">{el.queue_code}</div>
+                <div className="">{el.queue_code}： </div>
+                <div className="">{el.prompt_id === promptId ? <span className='text-green-700'>-{'>'} {promptId}</span> : el.prompt_id}</div>
               </div>
             })}
             <span className='text-orange-400'>
-            queue_pending
+              queue_pending
             </span>
-            {queue.queue_pending.length?queue.queue_pending.map(el => {
+            {queue.queue_pending.length ? queue.queue_pending.map(el => {
               return <div className="flex" key={el.prompt_id}>
-                <div className="">{el.prompt_id}： </div>
-                <div className="">{el.queue_code}</div>
+                <div className="">{el.queue_code}： </div>
+                <div className="">{el.prompt_id === promptId ? <span className='text-green-700'>-{'>'} {promptId}</span> : el.prompt_id}</div>
               </div>
-            }):'None'}
-          </div>):'当前无队列'}
+            }) : 'None'}
+          </div>) : '当前无队列'}
         </div>
-        {/* <div className="flex mt-4">
+        <div className="flex mt-4">
           <div className='w-32 text-right'>
             Progress：
           </div>
           <div className="w-64">
-            <Progress percent={30} />
+            <Progress percent={progress} />
           </div>
         </div>
-        <div className="flex mt-4">
+        {outputImages.length ? JSON.stringify(outputImages) : null}
+        {outputImages.length ? <div className="flex mt-0">
           <div className='w-32 text-right'>
-            Save Image：
+            Output Image：
           </div>
-          <Image
-            alt='output'
-            width={200}
-            src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-          />
-        </div> */}
+          {outputImages.map(el => {
+            return <Image
+              key={el}
+              alt='output'
+              width={200}
+              src={el}
+            />
+          })}
+        </div> : null}
+
       </div>
-      
+
     </>
   )
 }

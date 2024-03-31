@@ -25,6 +25,11 @@ const Layout = ({ children }) => {
   const router = useRouter()
   const [userInfo, setUserInfo] = useState({})
   const [clientWidth, setClientWidth] = useState(0)
+
+  // visibility: !mounted ? 'hidden' : '' 这用于解决页面加载时，样式不渲染
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
   // document.body.clientWidth
   useEffect(() => {
     getUserInfo().then((res) => {
@@ -52,11 +57,17 @@ const Layout = ({ children }) => {
       break
   }
 
+  if (!mounted) {
+    return  <div className="w-screen h-screen flex justify-center items-center text-gray-800">loading...</div>
+  }
+
   return (
     <div
       id="test-pro-layout"
       style={{
         height: "calc(100vh - 56px)",
+        // 这用于解决页面加载时，样式不渲染
+        visibility: !mounted ? 'hidden' : ''
       }}
     >
       <ProLayout
@@ -195,7 +206,7 @@ const Layout = ({ children }) => {
         <PageContainer >
           <ProCard
             style={{
-              height: "calc(100vh - 300px)",
+              // height: "calc(100vh - 300px)",
               minHeight: 800,
             }}
           >

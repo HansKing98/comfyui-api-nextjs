@@ -52,8 +52,8 @@ export async function GET() {
     if (item[1]) {
 
       return {
-        prompt_id: item[0],
-        queue_code: item[1],
+        queue_code: item[0],
+        prompt_id: item[1],
         ...getDetail(item[2] || '')
       }
     }
@@ -62,8 +62,8 @@ export async function GET() {
     if (item[1]) {
 
       return {
-        prompt_id: item[0],
-        queue_code: item[1],
+        queue_code: item[0],
+        prompt_id: item[1],
         ...getDetail(item[2] || '')
       }
     }

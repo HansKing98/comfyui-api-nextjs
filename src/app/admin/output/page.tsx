@@ -3,11 +3,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-async function getData({ prompt_id }: { prompt_id: string }) {
-  let url = `/api/history`;
+async function getData({
+  prompt_id,
+  max,
+}: {
+  prompt_id: string;
+  max: string | null;
+}) {
+  let url = `/api/history?b=1`;
+
   if (prompt_id) {
-    url = `/api/history?prompt_id=${prompt_id}`;
+    url = url + `&prompt_id=${prompt_id}`;
   }
+  if (max) {
+    url = url + `&max=${max}`;
+  }
+
   const res = await fetch(url);
 
   if (!res.ok) {
@@ -24,16 +35,17 @@ export default function Page() {
   const [isMounted, setIsMounted] = useState(false);
   const [data, setData] = useState<any>([]);
   const prompt_id = query.get("prompt_id");
+  const max = query.get("max");
 
   useEffect(() => {
     if (prompt_id) {
-      getData({ prompt_id }).then((res) => {
+      getData({ prompt_id,max }).then((res) => {
         // debugger
         console.log("res", res);
         setData(res);
       });
     } else {
-      getData({ prompt_id: "" }).then((res) => {
+      getData({ prompt_id: "",max }).then((res) => {
         // debugger
         setData(res);
       });
@@ -47,7 +59,7 @@ export default function Page() {
 
   return (
     <main className="">
-      <Link href={`/output`}>全部</Link>
+      <Link href={`/admin/output`}>全部</Link>
 
       {data.map((item: any, index: number) => (
         <div className="m-4" key={item.prompt_id}>

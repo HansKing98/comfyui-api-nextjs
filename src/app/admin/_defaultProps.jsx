@@ -14,13 +14,13 @@ const menu = {
         routes: [
             {
                 path: "/history",
-                name: "生图管理",
+                name: "AI写真",
                 icon: <RobotFilled />,
                 routes: [
                     {
                         path: "bot-list",
                         route:"/admin/history",
-                        name: "队列列表",
+                        name: "生成写真",
                         icon: <DatabaseFilled />
                     }
                 ],
@@ -28,13 +28,13 @@ const menu = {
             },
             {
                 path: "/prompt",
-                name: "Prompt 管理",
+                name: "写真管理",
                 icon: <ChromeFilled />,
                 routes: [
                     {
                         path: "prompt-list",
                         route:"/admin/output",
-                        name: "Prompt 历史",
+                        name: "生成历史",
                         icon: <ControlFilled />
                     }
                 ],
