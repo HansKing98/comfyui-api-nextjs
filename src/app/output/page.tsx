@@ -47,6 +47,9 @@ export default function Page() {
 
   return (
     <main className="">
+      <div  className="text-2xl font-bold mt-8 text-center">
+        <Link href={`/`}>COMFYUI-API-NEXTJS</Link>
+      </div>
       <Link href={`/output`}>全部</Link>
 
       {data.map((item: any, index: number) => (
@@ -57,10 +60,10 @@ export default function Page() {
           {/* {JSON.stringify(item.output_images)} */}
           <div className="mx-6 flex " style={{ height: "auto" }} key="el">
             {item.input_images.map((el: any) => (
-              <div className="flex flex-col mx-6 mb-6" key={el}>
+              <div className="flex flex-col mx-6 mb-6 max-w-xs" key={el}>
                 <div className="flex">
                   <a
-                    className="text-blue-300 text-nowrap"
+                    className="text-blue-300 text-wrap"
                     target="_blank"
                     href={el}
                   >
@@ -93,9 +96,9 @@ export default function Page() {
               </div>
             ))}
             {item.output_images.map((el: any) => (
-              <div className="flex flex-col mx-6 mb-6" key={el}>
+              <div className="flex flex-col mx-6 mb-6 max-x-xs" key={el}>
                 <div className="flex">
-                  <a className="text-blue-300" target="_blank" href={el}>
+                  <a className="text-blue-300 text-wrap" target="_blank" href={el}>
                     {el.replace(
                       `${process.env.NEXT_PUBLIC_COMFYUI_IMAGE_HOST}/view?filename=`,
                       ""
