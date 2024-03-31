@@ -40,9 +40,13 @@ const getDetail = (item) => {
 }
 
 export async function GET() {
-  let hash = Math.random()
+  //获取指定位数的随机数
+  function getRandom(num) {
+    let random = Math.floor((Math.random() + Math.floor(Math.random() * 9 + 1)) * Math.pow(10, num - 1));
+    return random
+  }
   // 可能是缓存，不太懂，加个随机参数
-  const res = await fetch(`${host}/queue?hash=${hash}`, {});
+  const res = await fetch(`${host}/queue?b=${getRandom(8) + Math.random()}`, {});
   const queue = await res.json()
   queue.queue_running = queue.queue_running.map((item) => {
     if (item[1]) {
