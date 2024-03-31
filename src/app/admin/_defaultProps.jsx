@@ -33,8 +33,8 @@ const menu = {
                 routes: [
                     {
                         path: "prompt-list",
-                        route:"/admin/prompt",
-                        name: "Prompt 列表",
+                        route:"/admin/output",
+                        name: "Prompt 历史",
                         icon: <ControlFilled />
                     }
                 ],

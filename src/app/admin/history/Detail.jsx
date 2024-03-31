@@ -56,7 +56,7 @@ const Page = ({ data, status, someEvent }) => {
     getQueue()
   }, [])
   const getQueue = () => {
-    commonGet('/api/queue').then(res => {
+    commonGet(`/api/queue?b=${Math.random()}`).then(res => {
       // console.log('res', res)
       setQueue(res)
     })
