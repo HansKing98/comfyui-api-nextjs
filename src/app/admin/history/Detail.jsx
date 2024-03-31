@@ -216,6 +216,12 @@ const Page = ({ data, status, someEvent }) => {
           // tooltip="最长为 24 位"
           placeholder={"给bot起个名字"}
         /> */}
+        <div className="ml-28">
+        默认为赛博夜景AI写真。建议不填写prompt先试一张(20s出图)。
+        <span className='text-blue-400'>
+        开启4x-UltraSharp后，效果绝佳。(2分钟出图)
+        </span>
+        </div>
         <ProFormTextArea width="xl" label="Scene Prompt" name="prompt" placeholder={"please input prompt"} />
         <ProFormText
           name="segment_anything"
