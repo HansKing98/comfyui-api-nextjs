@@ -127,7 +127,7 @@ const Page = ({ data, status, someEvent }) => {
     const formData = formRef?.current.getFieldsFormatValue()
     const input_image = formData.input_image[0].name
     commonPost('/api/prompt', { ...formData, input_image, }).then(res => {
-      setProgress(0)
+      setProgress(Math.floor(Math.random() * 10 + 1))
       setOutputImages([])
       setPromptId(res.prompt_id)
       const prompt_id = res.prompt_id
@@ -218,8 +218,9 @@ const Page = ({ data, status, someEvent }) => {
         /> */}
         <div className="ml-28">
         默认为赛博夜景AI写真。建议不填写prompt先试一张(20s出图)。
+        <br />
         <span className='text-blue-400'>
-        开启4x-UltraSharp后，效果绝佳。(2分钟出图)
+        不开启4x-UltraSharp为效果预览，开全后效果绝佳。(2分钟出图)
         </span>
         </div>
         <ProFormTextArea width="xl" label="Scene Prompt" name="prompt" placeholder={"please input prompt"} />
